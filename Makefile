@@ -4,7 +4,7 @@
 
 
 CC=gcc
-CFLAGS=-I$(IDIR) -std=c99 -Wall -Wextra -O0 -g
+CFLAGS=-I$(IDIR) -std=c99 -Wall -Wextra -O0 -g -fprofile-arcs -ftest-coverage
 
 IDIR=include
 ODIR=obj
@@ -31,10 +31,14 @@ $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
 test: $(OBJ)
 	gcc -o $@ $^ $(CFLAGS) $(LIBS)
 
-.PHONY: clean again
+.PHONY: clean again check
 
 clean:
-	rm -f $(ODIR)/*.o *~ core $(IDIR)/*~ 
+	rm -f $(ODIR)/* *~ core $(IDIR)/*~ 
 
 again:
 	make clean && make
+
+# todo: error if test doesn't exist.
+check:
+	./test 
