@@ -14,15 +14,15 @@ SDIR=src
 LIBS=-lm
 
 # All relevant source files are listed here:
-_SRC = skabloom.c, skabloom_test.c
+_SRC = skabloom.c skabloom_test.c hash.c
 SRC = $(patsubst %,$(SDIR)/%,$(_SRC))
 
 # All .h files here
-_DEPS = skabloom.h
+_DEPS = skabloom.h hash.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 # Desired .o files here
-_OBJ = skabloom.o skabloom_test.o 
+_OBJ = skabloom.o skabloom_test.o hash.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)

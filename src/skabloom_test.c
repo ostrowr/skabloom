@@ -1,6 +1,7 @@
 #include "skabloom.h"
 #include <stdio.h>
 #include <assert.h>
+#include <math.h>
 
 #define IS_POWER_OF_2(n) (n && !(n & (n - 1)))
 

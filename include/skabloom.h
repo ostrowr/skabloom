@@ -1,7 +1,4 @@
-#include <stdlib.h>
 #include <stddef.h>
-#include <math.h>
-#include <limits.h>
 
 typedef struct skabloom_t {
   size_t size;

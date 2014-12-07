@@ -1,4 +1,8 @@
 #include "skabloom.h"
+#include "hash.h"
+#include <limits.h>
+#include <stdlib.h>
+#include <math.h>
 
 #define DEFAULT_CAPACITY 65536
 #define MIN_CAPACITY 16
