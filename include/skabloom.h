@@ -1,14 +1,31 @@
-typedef struct Skabloom {
-  /* TODO */
-} Skabloom;
+#include <stdlib.h>
+#include <stddef.h>
+#include <math.h>
 
-int skabloom_check(Skabloom *s, void *data);
 
-int skabloom_add(Skabloom *s, void *data);
+typedef struct skabloom_t {
+  size_t size;
+  size_t num_hashes;
+  size_t num_items;
+  double max_error_rate;
+  char *bitmap;
+  size_t num_filled;
+  double error_rate;
+  struct skabloom_t *next;
 
-int skabloom_union(Skabloom *s1, Skabloom *s2, Skabloom *result);
+} skabloom_t;
 
-int skabloom_intersection(Skabloom *s1, Skabloom *s2, Skabloom *result);
+skabloom_t *skabloom_create(size_t value_hint, double max_error_rate);
 
-double skablooom_collision_probability(Skabloom *s1);
+int skabloom_destroy(skabloom_t *s);
+
+int skabloom_check(skabloom_t *s, void *data);
+
+int skabloom_add(skabloom_t *s, void *data);
+
+int skabloom_union(skabloom_t *s1, skabloom_t *s2, skabloom_t *result);
+
+int skabloom_intersection(skabloom_t *s1, skabloom_t *s2, skabloom_t *result);
+
+double skablooom_collision_probability(skabloom_t *s1);
 

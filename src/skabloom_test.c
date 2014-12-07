@@ -1,6 +1,11 @@
 #include "skabloom.h"
 #include <stdio.h>
 
+
+int test_skabloom_create(){
+  return -1;
+}
+
 int test_skabloom_check(){
   return -1;
 }
@@ -22,7 +27,9 @@ int test_skabloom_collision_probability(){
 }
 
 
-int main(int argc, char *argv[]){
+
+
+int main(void){
   test_skabloom_check();
   test_skabloom_add();
   test_skabloom_union();
