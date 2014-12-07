@@ -10,18 +10,18 @@
 
 // returns the optimal size of a skabloom (in bits)
 // given the desired capacity and error rate.
-static inline size_t optimal_size(size_t capacity, double max_error_rate){
+static inline uint64_t optimal_size(int capacity, double max_error_rate){
   // TODO CHECK THIS DERIVATION
-  double size = (size_t) (capacity/(-0.480453) * log(max_error_rate));
-  return 1 << ((int) log2(size - 1) + 1);
+  double size = (uint64_t) (capacity/(-0.480453) * log(max_error_rate));
+  return 1 << ((uint64_t) log2(size - 1) + 1);
 }
 
 
 // returns the optimal number of hashes for a skabloom
 // given the size and desired capacity.
-static inline size_t optimal_hash_count(size_t size, size_t capacity){
+static inline int optimal_hash_count(uint64_t size, uint64_t capacity){
   // TODO CHECK THIS DERIVATION
-  return (size_t) (size / capacity * log(2));
+  return (int) (size / capacity * log(2));
 }
 
 
@@ -40,7 +40,7 @@ static inline size_t optimal_hash_count(size_t size, size_t capacity){
  *   an empty skabloom_t*, on success
  *   NULL, on memory allocation failure.
  */
-skabloom_t *skabloom_create(size_t value_hint, double max_error_rate){
+skabloom_t *skabloom_create(uint64_t value_hint, double max_error_rate){
   skabloom_t *s = malloc(sizeof(skabloom_t));
   if (s == NULL) return NULL; // TODO: free all allocated memory
 
@@ -50,7 +50,7 @@ skabloom_t *skabloom_create(size_t value_hint, double max_error_rate){
   s->error_rate = 0.0;
   s->next = NULL;
 
-  size_t capacity = DEFAULT_CAPACITY;
+  uint64_t capacity = DEFAULT_CAPACITY;
   if (value_hint > MIN_CAPACITY)
     capacity = value_hint;
 
