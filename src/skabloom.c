@@ -8,6 +8,13 @@
 #define MIN_CAPACITY 16
 
 
+#define BIT_BUCKET(i) (i / CHAR_BIT)
+#define BIT_OFFSET(i) (i % CHAR_BIT)
+#define BIT_MASK(i) (1 << BIT_OFFSET(i))
+#define BIT_GET(bitmap, i) ((bitmap[BIT_BUCKET(i)]) & (BIT_MASK(i)))
+#define BIT_SET(bitmap, i) ((bitmap[BIT_BUCKET(i)]) |= BIT_MASK(i));
+
+
 // returns the optimal size of a skabloom (in bits)
 // given the desired capacity and error rate.
 static inline uint64_t optimal_size(int capacity, double max_error_rate){
@@ -42,7 +49,8 @@ static inline int optimal_hash_count(uint64_t size, uint64_t capacity){
  */
 skabloom_t *skabloom_create(uint64_t value_hint, double max_error_rate){
   skabloom_t *s = malloc(sizeof(skabloom_t));
-  if (s == NULL) return NULL; // TODO: free all allocated memory
+  if (s == NULL) 
+    return NULL; // TODO: free all allocated memory
 
   s->num_items = 0;
   s->max_error_rate = max_error_rate;
@@ -59,7 +67,9 @@ skabloom_t *skabloom_create(uint64_t value_hint, double max_error_rate){
   s->num_hashes = optimal_hash_count(s->size, capacity);
 
   s->bitmap = calloc(s->size/CHAR_BIT, 1);
-  if (s->bitmap == NULL) return NULL; // TODO: free all allocated memory
+  if (s->bitmap == NULL) 
+    return NULL; // TODO: free all allocated memory
+  s->last_bloom = s;
   return s;
 }
 
@@ -76,21 +86,52 @@ skabloom_t *skabloom_create(uint64_t value_hint, double max_error_rate){
  *   None
  */
 void skabloom_destroy(skabloom_t *s){
-  if (s == NULL) return;
+  if (s == NULL) 
+    return;
   free(s->bitmap);
   skabloom_destroy(s->next);
   free(s);
 }
 
 
-int skabloom_check(skabloom_t *s, void *data){
-  /* TODO */
+int skabloom_probably_contains(skabloom_t *s, void *data, size_t nbytes){
+  while (s != NULL){
+    uint64_t hashes[s->num_hashes];
+    int ret = generate_n_hashes(s->num_hashes, s->size, data, nbytes, hashes);
+    if (ret < 0) 
+      return ret;
+    bool in_this_filter = true;
+    for (int i = 0; i < s->num_hashes; i++){
+      if (!BIT_GET(s->bitmap, hashes[i])){
+        in_this_filter = false;
+        break;
+      }
+    }
+    if (in_this_filter) 
+      return 1;
+    s = s->next;
+  }
   return 0;
 }
 
 
-int skabloom_add(skabloom_t *s, void *data){
-  /* TODO */
+int skabloom_add(skabloom_t *s, void *data, size_t nbytes){
+  // TODO: fix the redundancy with probably_contains
+  int ret = skabloom_probably_contains(s, data, nbytes);
+  if (ret) 
+    return ret;
+
+  skabloom_t *last = s->last_bloom;
+  // TODO: check if it's too full, and if it is, create a new one and assign
+  // all ends to that.
+  uint64_t hashes[s->num_hashes];
+  ret = generate_n_hashes(s->num_hashes, s->size, data, nbytes, hashes);
+  if (ret < 0) 
+    return ret;
+
+  for (int i = 0; i < s->num_hashes; i++){
+    BIT_SET(last->bitmap, hashes[i]);
+  }
   return 0;
 }
 
