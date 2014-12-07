@@ -11,7 +11,7 @@ ODIR=obj
 LDIR=lib
 SDIR=src
 
-# LIBS=-lm
+LIBS=-lm
 
 # All relevant source files are listed here:
 _SRC = skabloom.c, skabloom_test.c
