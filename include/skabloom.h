@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <math.h>
-
+#include <limits.h>
 
 typedef struct skabloom_t {
   size_t size;
@@ -17,7 +17,7 @@ typedef struct skabloom_t {
 
 skabloom_t *skabloom_create(size_t value_hint, double max_error_rate);
 
-int skabloom_destroy(skabloom_t *s);
+void skabloom_destroy(skabloom_t *s);
 
 int skabloom_check(skabloom_t *s, void *data);
 
